@@ -1,44 +1,67 @@
-console.log("Script carregado!");
+// Pega o evento de click do botão
+document.getElementById('buscarCep').addEventListener('click', buscar);
 
-document.getElementById('buscarCep').addEventListener('click', function() {
-    console.log("Botão clicado!");
-    
+// Pega o evento de submit do formulário (Enter)
+document.getElementById('cepForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Previne o comportamento padrão de submit
+    buscar();
+});
+
+//Função para trazer na tela o erro
+function error(message) {
+    document.getElementById('result').innerHTML = `
+        <div class="error">
+            <h2>${message}</h2>
+        </div>
+    `;
+}
+
+function buscar() {
     const cepInput = document.getElementById('cepInput').value;
+    // Remove tudo que não é dígito
     const cep = cepInput.replace(/\D/g, '');
-    console.log("CEP processado:", cep);
-    
+    const url = `https://viacep.com.br/ws/${cep}/json/`;
+
     if (cep.length !== 8) {
-        alert("CEP deve ter 8 dígitos");
+        error('CEP deve conter exatamente 8 dígitos');
         return;
     }
-    
-    console.log("Fazendo requisição para:", `https://viacep.com.br/ws/${cep}/json/`);
-    
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+
+    fetch(url)
     .then(response => {
-        console.log("Status da resposta:", response.status);
         if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
+            throw new Error('Não foi possível consultar o CEP');
         }
         return response.json();
     })
     .then(data => {
-        console.log("Dados recebidos:", data);
-        
-        if (data.erro) {
-            throw new Error("CEP existe mas não foi encontrado na base");
+        if (data.erro) { // Verifica se a propriedade erro existe e é true, é assim que retorna quando não acha o cep
+            error('CEP não encontrado na base de dados');
+            return;
         }
-        
-        // Preenche os resultados
-        document.querySelectorAll('#info p')[0].textContent = data.cep || 'Não informado';
-        document.querySelectorAll('#info p')[1].textContent = data.logradouro || 'Não informado';
-        document.querySelectorAll('#info p')[2].textContent = data.bairro || 'Não informado';
-        document.querySelectorAll('#info p')[3].textContent = data.localidade || 'Não informado';
-        document.querySelectorAll('#info p')[4].textContent = data.uf || 'Não informado';
-        
+
+        console.log('Response received:', data);
+        document.getElementById('result').innerHTML = `
+            <h1>O endereço do CEP</h1>
+            <div id="info">
+                <h3> CEP:</h3> <p>${data.cep || 'Não informado'}</p>
+            </div>
+            <div id="info">
+                <h3> Logradouro:</h3> <p>${data.logradouro || 'Não informado'}</p>
+            </div>
+            <div id="info">
+                <h3> Bairro:</h3> <p>${data.bairro || 'Não informado'}</p>
+            </div>
+            <div id="info">
+                <h3> Cidade:</h3> <p>${data.localidade || 'Não informado'}</p>
+            </div>
+            <div id="info">
+                <h3> Estado:</h3> <p>${data.uf || 'Não informado'}</p>
+            </div>
+        `;
     })
-    .catch(error => {
-        console.error("Erro na requisição:", error);
-        alert("Erro ao buscar CEP: " + error.message);
+    .catch(err => {
+        console.error('Erro na requisição:', err);
+        error('Ocorreu um erro ao buscar o CEP. Por favor, tente novamente.');
     });
-});
+}
