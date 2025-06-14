@@ -10,7 +10,8 @@
 ![ 8 digitos no CEP](img/8DigitosNoCep.jpeg)
 
 ## Cep que não tem na API
-![Cep que não tem na API](img/CepQueNaoTemNaAPI.jpeg)
+![Cep que não tem na API](img/cepQueNaoTemNaAPI.jpeg)
+
 
 ## Apenas Numeros
 ![Apenas Numeros](img/apenasNumeros.jpeg)
