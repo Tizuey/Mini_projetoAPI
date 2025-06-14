@@ -22,10 +22,18 @@ function buscar() {
     const cep = cepInput.replace(/\D/g, '');
     const url = `https://viacep.com.br/ws/${cep}/json/`;
 
+
+    // Verifica se o CEP contém apenas números e se tem 8 dígitos abaixo
+    if (!/^\d+$/.test(cep)) {
+        error('CEP deve apenas ter números');
+        return
+    }
+
     if (cep.length !== 8) {
         error('CEP deve conter exatamente 8 dígitos');
         return;
     }
+
 
     fetch(url)
     .then(response => {
