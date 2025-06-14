@@ -1,1 +1,4 @@
-# Mini_projetoAPI
+# Projeto simples API Brasil
+
+#Pagina Inicial
+![Pagina Inicial](img/paginainicial.jpeg)
